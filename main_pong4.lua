@@ -8,6 +8,10 @@ push = require 'push'
 
 function love.load()
     love.graphics.setDefaultFilter('nearest','nearest')
+
+
+    math.randomseed(os.time())
+
     largeFont = love.graphics.newFont('font.ttf', 32)
     smallFont = love.graphics.newFont('font.ttf', 8)
     
@@ -15,7 +19,15 @@ function love.load()
     player2Score = 0
 
     player1Y = 10
-    player2Y = VIRTUAL_HEIGHT - 30
+    player2Y = VIRTUAL_HEIGHT - 50
+
+    ballX = VIRTUAL_WIDTH / 2 - 2
+    ballY = VIRTUAL_HEIGHT / 2 - 2
+
+    ballDX = math.random(2) == 1 and 100 or -100
+    ballDY = math.random(-50, 50)
+
+    gameState = 'start'
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         resizable = false,
@@ -29,9 +41,22 @@ end
 function love.keypressed(key)
     if key == 'escape' then 
         love.event.quit()
+
+
+    elseif key == 'enter' or key == 'return' then
+        if gameState == 'start' then
+            gameState = 'play'
+        else
+            gameState = 'start'
+
+            ballX = VIRTUAL_WIDTH / 2 - 2
+            ballY = VIRTUAL_HEIGHT / 2 - 2
+
+             ballDX = math.random(2) == 1 and 100 or -100
+             ballDY = math.random(-50, 50) * 1.5
     end
 end
-
+end 
 function love.update(dt)
     if love.keyboard.isDown('s') then 
 
@@ -50,6 +75,10 @@ function love.update(dt)
         player2Y = math.min(VIRTUAL_HEIGHT - 20,player2Y + PADDLE_SPEED * dt)
      end
 
+     if gameState == 'play' then
+        ballX = ballX + ballDX * dt
+        ballY = ballY + ballDY * dt
+     end 
 end
 
 
